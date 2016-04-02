@@ -1,3 +1,5 @@
+// app.js as of 10:21 on 4/2
+
 // Twitter Bot app called twitterapp.js 
 // primarily from express then nmp install
 var express = require('express');
@@ -26,8 +28,7 @@ var client = new Twitter({
 var params = {screen_name: 'writtenspoken'};
 client.get('statuses/user_timeline', params, function(error, tweets, response){
   if (!error) {
-    console.log(tweets);
-	console.log(response);
+    // console.log(tweets);
   }
 });
 
@@ -51,116 +52,181 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
+// var cityCodes = [819827, 524901, 1271881, 1283240, 703448, 1282898, 3632308, 1273294, 502069, 3645532, 529368, 462755, 502018, 538601]
+
+
+	
+	// "9bc2b749e54b6dddb2836653b91bb9ad"};  process.env.WeatherAPIKey};
+
+// http://api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID=9bc2b74e54b6dddb283665b91bb9ad
+// 9bc2b74e54b6dddb283665b91bb9ad
+
+
 function myTwitterFeed () {
 	
-	var randIndex = Math.floor((Math.random() * 74000) + 1);
-	console.log('our random index is ' + randIndex);
+	// var randIndex = Math.floor((Math.random() * 74000) + 1);
+var randIndex = Math.floor((Math.random() * 74000) + 1);
+console.log('our random index is ' + randIndex);
 
-	// base URL for open weather
-	var URL = "http://api.openweathermap.org/data/2.5/forecast/city"
+// base URL for wiki
+var URL = "http://api.openweathermap.org/data/2.5/forecast/city"
 
-	var queryParam1 = {
-		id: cityCodes[randIndex],
-		units: "imperial",
-		APPID : "9bc2b749e54b6dddb2836653b91bb9ad"};
+var queryParam1 = {
+	id: cityCodes[randIndex],
+	units: "imperial",
+	APPID : "9bc2b749e54b6dddb2836653b91bb9ad"};
 
-	// Searching for JSON first pass
-	request( {uri :URL, qs: queryParam1} , function(error, weath_response, body){
-	
-		// 200 is OK
-		if (!error && weath_response.statusCode == 200){
-			
-		  var nb = JSON.parse(body);
-		  // var allCityArr = nb.list;
+// Searching for JSON first pass
+request( {uri :URL, qs: queryParam1} , function(error, weath_response, body){
+	//console.log(body);
+    // 200 is OK
+    if (!error && weath_response.statusCode == 200){
+		
+	  var nb = JSON.parse(body);
+	  // var allCityArr = nb.list;
+	  
+	  // console.log(body);
+	  
+      //Have a response from APOD. Process and use to provide response to our client.
+      //apodJSON = JSON.parse(body);  // turn into JSON object
+	  console.log(nb.city.name + ', ' + nb.city.country);
+	  var date = nb.list[0].dt_txt;
+	  var dateStr = date.toString();
+	  dateStr = dateStr.substring(0, dateStr.indexOf(' '));
+	  console.log(dateStr);
+	  
+	  var dateWeath = '';
+	  
+	  // 2016-04-01
+	  var year = dateStr.substring(0,4);
+	  var month = dateStr.substring(5,7);
+	  var date = dateStr.substring(8);
+	  console.log('The new date format is ' + month + '/' + date + '/' + year);
+	  
+	  dateWeath = month + '/' + date + '/' + year;
+	  
+	  console.log(nb.list[0].main.temp + ' degrees');
+	  var weatherStuff = nb.list[0].weather;
+	  for (var condition in weatherStuff){
+		  // console.log(weatherStuff[condition]);
+	  }
+	  console.log(nb.list[0].weather[0].main);
+	  var statusStr = 'The weather in ' + nb.city.name + ', ' + nb.city.country + ': ' + nb.list[0].weather[0].main + ' and ' + nb.list[0].main.temp + ' degrees on ' + dateWeath;
+	  var twitLen = statusStr.length;
+	  
+	  // var mapName = nb.city.name;
+	  // var searchPhrase = nb.city.name + ', ' + nb.city.country
+	  // initMap(name, searchPhrase);
+	  
+	  // console.log(twitLen);
+	  if (twitLen <= 140){
 		  
-		  // console.log(body);
-		  
-		  //Have a response from APOD. Process and use to provide response to our client.
-		  //apodJSON = JSON.parse(body);  // turn into JSON object
-		  console.log(nb.city.name + ', ' + nb.city.country);
-		  var date = nb.list[0].dt_txt;
-		  var dateStr = date.toString();
-		  dateStr = dateStr.substring(0, dateStr.indexOf(' '));
-		  console.log(dateStr);
-		  
-		  var dateWeath = '';
-		  
-		  // 2016-04-01
-		  var year = dateStr.substring(0,4);
-		  var month = dateStr.substring(5,7);
-		  var date = dateStr.substring(8);
-		  console.log('The new date format is ' + month + '/' + date + '/' + year);
-		  
-		  dateWeath = month + '/' + date + '/' + year;
-		  
-		  console.log(nb.list[0].main.temp + ' degrees');
-		  var weatherStuff = nb.list[0].weather;
-		  var statusStr = 'The weather in ' + nb.city.name + ', ' + nb.city.country + ': ' + nb.list[0].weather[0].main + ' and ' + nb.list[0].main.temp + ' degrees on ' + dateWeath;
-		  var twitLen = statusStr.length;
-		  
-		  if (twitLen <= 140){
-			  
-			// this is from the npm Twitter Node Module
-			// POST
-			// Post a tweet to Twitter; NOTE - posting the same status more than once will result in error
-			client.post('statuses/update', {status: statusStr},  function(error, tweet, response){
-				if(error) 
-				{
-					console.log("an error was thrown");
-					console.log(error);
-					throw error;
-				}
-				var twitterDate = tweet.created_at.substring(tweet.created_at.indexOf(' ') + 1, tweet.created_at.indexOf(' ') + 10);
-				var twitterTweeta = tweet.text.split('on');
-				var twitterTweetb = twitterTweeta[0];
-				var twitterForWeb = twitterTweetb + 'on ' + twitterDate;
-				console.log(twitterForWeb);
-				});
-		  }
-		  else {
-			  console.log('twitter message is too long');
-		  }
-		}
+		// .dt_text + ' ' + nb.list[0].weather.main
+		client.post('statuses/update', {status: statusStr},  function(error, tweet, response){
+			if(error) 
+			{
+				console.log("an error was thrown");
+				console.log(error);
+				throw error;
+			}
+			//console.log(tweet);
+			var twitterDate = tweet.created_at.substring(tweet.created_at.indexOf(' ') + 1, tweet.created_at.indexOf(' ') + 10);
+			var twitterTweeta = tweet.text.split('on');
+			var twitterTweetb = twitterTweeta[0];
+			console.log(twitterTweetb);
+			var twitterForWeb = twitterTweetb + 'on ' + twitterDate;
+			console.log(twitterForWeb);
+			// console.log(response);  // Tweet body
+			});
+	  }
+	  else {
+		  console.log('twitter message is too long');
+	  }
+    }
 
-		else {
-		  //Log error info to console and render generic error page.
-		  console.log("error");
-		  console.log("Error in JSON request: " + error);
-		  res.render('weathError');
-		}
+    else {
+      //Log error info to console and render generic error page.
+	  console.log("error");
+      // console.log("Error in JSON request: " + error);
+      // console.log(weath_response);
+      // res.render('weathError');
+    }
 
-	});
+});
 
-	// catch 404 and forward to error handler
-	app.use(function(req, res, next) {
-	  var err = new Error('Not Found');
-	  err.status = 404;
-	  next(err);
-	});
+// this is from the npm Twitter Node Module
+// POST
+// Post a tweet to Twitter; NOTE - posting the same status more than once will result in error
+// function postToTwitter(weather){
 
-	// error handlers
+	// client.post('statuses/update', {status: 'The weather in ' weather + ' ' + Date.now()},  function(error, tweet, response){
+		// if(error) 
+			// {
+				// console.log("an error was thrown");
+				// console.log(error);
+				// throw error;
+			// }
+		// console.log("should have posted");
+		// // console.log(response);  // Tweet body
+	// });
+// }
 
-	// development error handler
-	// will print stacktrace
-	if (app.get('env') === 'development') {
-	  app.use(function(err, req, res, next) {
-		res.status(err.status || 500);
-		res.render('error', {
-		  message: err.message,
-		  error: err
-		});
-	  });
-	}
+// function initMap(mapToAdd, searchPhrase) {
 
-	// production error handler
-	// no stacktraces leaked to user
-	app.use(function(err, req, res, next) {
-	  res.status(err.status || 500);
-	  res.render('error', {
-		message: err.message,
-		error: {}
-	  });
-	});
+	// // find all the div elements with the class name of the current message text, there may be more than one if the map is being added from a click to the submenu rather than a click to the message, so we take the most recent one, which is the last one in the array of elements returned to the value mapDivs
+	// var mapDivs = document.getElementsByClassName(mapToAdd);
+	// // the last element in mapDivs will be the most recently created div
+	// var mapDiv = mapDivs[0];
+
+	// // this will be the center location
+	// var minneapolis = new google.maps.LatLng(44.9778, -93.2650);
+
+	// // map options with center location as defined above, zoom level 10
+	// var mapOptions = {
+		// center: minneapolis,
+		// zoom: 10,
+		// mapTypeId: google.maps.MapTypeId.ROADMAP,
+		// scrollwheel: false
+	// };
+
+	// // make the map - the div created for it is big enough to hold it based on CSS specs for 'map' class
+	// map = new google.maps.Map(mapDiv, mapOptions);
+
+	// // Got the idea of creating a property for my map from StackOverflow: http://stackoverflow.com/questions/10818910/how-to-get-the-google-map-linked-to-a-div
+	// var mapOnDiv = document.getElementsByClassName(toDoArray[currIndex].msgText);
+	// mapOnDiv[0].gMap = map;
+// }
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
 }
 
 module.exports = app;
