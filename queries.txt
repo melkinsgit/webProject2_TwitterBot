@@ -1,0 +1,43 @@
+https://en.wikipedia.org/w/api.php? 
+
+https://en.wikipedia.org/w/api.php?action=query&titles=Main%20Page&prop=revisions&rvprop=content&format=json
+
+https://en.wikipedia.org/w/api.php?action=query&titles=mark+twain&prop=revisions&rvprop=content&format=json
+
+{  
+   "batchcomplete":"",
+   
+   "query":{"normalized":[  
+         {  
+            "from":"mark twain",
+			
+            "to":"Mark twain"
+         }
+      ],
+	  
+      "pages":{  
+         "2115231":{  
+            "pageid":2115231,
+			
+            5) "ns":0,
+			
+            "title":"Mark twain",
+			
+            "revisions":[  
+               {  
+                  "contentformat":"text/x-wiki",
+                  "contentmodel":"wikitext",
+                  "*":"#REDIRECT [[Mark Twain]]  {{R from other capitalization}}"
+               }
+            ]
+         }
+      }
+   }
+}
+
+body.query.pages.pageID
+
+        format: "json",
+        action: "parse",
+        prop: "sections",
+        pageid: pageId
