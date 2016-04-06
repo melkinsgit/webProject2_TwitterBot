@@ -1,4 +1,6 @@
 body {
+	font-family: Arial, Verdana, sans-serif;
 	font-style: bold;
-	color: green;
+	padding: 5px;
+	margin: 3px;
 }

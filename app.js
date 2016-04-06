@@ -46,9 +46,9 @@ client.get('statuses/user_timeline', params, function(error, tweets, response){
   }
 });
 
-// require the index and users route files to route content to client side views
+// require the index and about route files to route content to client side views
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var about = require('./routes/about');
 
 var url = "mongodb://localhost:27017/tweetsDB";
 
@@ -84,7 +84,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);  // index/home page
-app.use('/users', users);  // users page
+app.use('/about', about);  // users page
 
 
 /* ___________________________________________________
@@ -150,13 +150,13 @@ function myTwitterFeed () {
 			// this is from the npm Twitter Node Module
 			// POST
 			// Post a tweet to Twitter; NOTE - posting the same status more than once will result in error
-			// client.post('statuses/update', {status: statusStr},  function(error, tweet, response){
-				// if(error) 
-				// {
-					// console.log("an error was thrown");
-					// console.log(error);
-					// throw error;
-				// }
+			client.post('statuses/update', {status: statusStr},  function(error, tweet, response){
+				if(error) 
+				{
+					console.log("an error was thrown");
+					console.log(error);
+					throw error;
+				}
 				
 				var thisTweet = {tweetText : statusStr, mapPhrase: nb.city.name + ', ' + nb.city.country};
 				console.log(thisTweet);
@@ -177,7 +177,7 @@ function myTwitterFeed () {
 					}
 					console.log('just saved ' + savedTweet);
 				});
-			// });
+			});
 		  }
 		  else {
 			  console.log('twitter message is too long');
