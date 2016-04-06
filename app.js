@@ -15,7 +15,7 @@ var router = express.Router();
 var Twitter = require('twitter');  // from Twitter npm
 
 // every 10 seconds post another random weather report to Twitter
-var myVar = setInterval(myTwitterFeed, 10000);
+var myVar = setInterval(myTwitterFeed, 1000000);
 
 // include Tweet model file
 var Tweet = require('./models/tweet.js');
@@ -139,8 +139,9 @@ function myTwitterFeed () {
 		  
 		  // string for tweet
 		  dateWeath = month + '-' + date + '-' + year;
+		  console.log(typeof nb.list[0].main.temp)
 		  
-		  var statusStr = 'The weather in ' + nb.city.name + ', ' + nb.city.country + ': ' + nb.list[0].weather[0].main + ' and ' + nb.list[0].main.temp + ' degrees on ' + dateWeath;
+		  var statusStr = 'The weather in ' + nb.city.name + ', ' + nb.city.country + ': ' + nb.list[0].weather[0].main + ' and ' + nb.list[0].main.temp.toPrecision(2) + ' degrees on ' + dateWeath;
 		  
 		  // make sure tweet isn't too long
 		  var twitLen = statusStr.length;
@@ -176,7 +177,7 @@ function myTwitterFeed () {
 					}
 					console.log('just saved ' + savedTweet);
 				});
-			});
+			// });
 		  }
 		  else {
 			  console.log('twitter message is too long');

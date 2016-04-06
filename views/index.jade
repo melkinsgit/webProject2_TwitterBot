@@ -1,9 +1,14 @@
 extends layout
 
 block content
-	h1 MBEWorldWeather
-	p Welcome to #{title}
+	h1 MBE World Weather
+	p MBE World Weather gives you a weather report -- from somewhere in the wide world -- every 24 hours.
 
 	.tweetsMade
-		for tweet in tweets
-			p Tweet: #{tweet.tweetText}
+	div(style='overflow: auto; width:650px; height:200px')
+		p
+			for tweet in tweets
+				li #{tweet.tweetText}
+	p
+	p
+	p
